@@ -1,0 +1,53 @@
+version: '3.8'
+
+networks:
+  mongoClusterNet:
+    name: mongoClusterNet
+    driver: bridge
+
+volumes:
+  mongodb_data: {}
+
+services:
+# first, we define the three mongo servers that will act as replicas
+# here, we steup the hostname ports, and startup command
+# which is the same as discussed in the previous section
+  mongo1:
+    hostname: mongo1
+    image: mongo
+    expose:
+      - 27017
+    ports:
+      - 30001:27017 
+    restart: always
+    volumes:
+      - mongodb_data:/var/lib/mongodb    
+    command: mongod --replSet mongoRS01 --bind_ip_all
+    networks:
+      - mongoClusterNet
+  mongo2:
+    hostname: mongo2
+    image: mongo
+    expose:
+      - 27017
+    ports:
+      - 30002:27017
+    restart: always
+    volumes:
+      - mongodb_data:/var/lib/mongodb  
+    command: mongod --replSet mongoRS01 --bind_ip_all
+    networks:
+      - mongoClusterNet
+  mongo3:
+    hostname: mongo3
+    image: mongo
+    expose:
+      - 27017
+    ports:
+      - 30003:27017
+    restart: always
+    volumes:
+      - mongodb_data:/var/lib/mongodb      
+    command: mongod --replSet mongoRS01 --bind_ip_all
+    networks:
+      - mongoClusterNet
